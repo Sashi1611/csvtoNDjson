@@ -1,0 +1,61 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+%matplotlib inline
+import matplotlib
+import seaborn as sns
+import plotly.express as px
+import csv
+import json
+
+
+import json
+import glob
+glob.glob('./pp*.csv')[0]
+
+
+def csv_ndjson():
+    
+''' to read csv and convert to new line delimited json'''
+
+    with open (glob.glob('./pp*.csv')[0] )as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+
+    with open('dataj.json', 'w') as f:
+        json.dump(rows, f)
+
+    with open(glob.glob('./dataj.json')[0], 'r') as f:
+        json_data = json.load(f)
+
+    with open('./json_lines.jl', 'w') as outfile:
+        for entry in json_data:
+            json.dump(entry, outfile)
+            outfile.write('\n')
+            
+    return None
+    
+    
+    
+   
+    
+    
+    
+    import apache_beam as beam
+from apache_beam.options.pipeline_options import PipelineOptions
+
+
+ 
+    with beam.Pipeline(options=pipeline_options) as pipeline:
+        (pipeline
+         | 'Start' >> beam.Create([None])
+         | 'Convertion CSV to JL' >> beam.ParDo(csv_ndjson()))
+         )
+         
+    from apache_beam.dataframe.io import read_json
+
+with beam.Pipeline() as p:
+    
+  df = p | read_json("gs://.jl")
+  avg_county = df.groupby("County")["Price"].mean()
+  avg_county.to_csv('output')
